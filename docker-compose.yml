@@ -1,6 +1,6 @@
 version: "3.7"
 services:
-  item-app:
+  item-app: # Membuat service dengan nama "item-app"
     image: ghcr.io/firmansyw30/project-pertama-microservices-dicoding/item-app:v1  # Menggunakan image dari GitHub Packages
     depends_on:
       - item-db  # Memastikan item-app hanya berjalan setelah item-db diluncurkan
@@ -13,7 +13,7 @@ services:
       DB_USER: root
     restart: always # Restart container jika terhenti
 
-  item-db:
+  item-db: # Membuat service dengan nama "item-db"
     image: mongo:3  # Menggunakan image mongo:3 dari Docker Hub
     volumes:
       - app-db:/data/db  # Volume untuk menyimpan data MongoDB di dalam container
@@ -23,4 +23,4 @@ services:
     restart: always # Restart container jika terhenti
 
 volumes:
-  app-db:  # Volume bernama app-db 
+  app-db:  # Membuat Volume bernama app-db 
