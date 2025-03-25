@@ -13,11 +13,8 @@ ENV NODE_ENV=production DB_HOST=item-db
 # Menjalankan perintah npm install dan npm run build
 RUN npm install --production --unsafe-perm && npm run build
 
-# Menjalankan perintah npm start
-CMD ["npm", "start"]
-
 # Membuka port 8080
 EXPOSE 8080
 
-# Menambahkan label untuk GitHub Container Registry
-LABEL org.opencontainers.image.source=https://github.com/firmansyw30/project-pertama-microservices-dicoding
+# Menjalankan perintah npm start
+CMD ["npm", "start"]
