@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+  item-app:
+    image: ghcr.io/firmansyw30/project-pertama-microservices-dicoding/item-app:v1  # Menggunakan image dari GitHub Packages
+    depends_on:
+      - item-db  # Memastikan item-app hanya berjalan setelah item-db diluncurkan
+    ports:
+      - "80:8080"  # Port mapping dari host 80 ke container 8080
+    working_dir: /app # Direktori kerja di dalam container
+    environment:
+      NODE_ENV: production  # Sesuaikan dengan environment di Dockerfile
+      DB_HOST: item-db
+      DB_USER: root
+    restart: always # Restart container jika terhenti
+
+  item-db:
+    image: mongo:3  # Menggunakan image mongo:3 dari Docker Hub
+    volumes:
+      - app-db:/data/db  # Volume untuk menyimpan data MongoDB di dalam container
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root  # Sesuaikan dengan konfigurasi MongoDB
+      MONGO_INITDB_ROOT_PASSWORD: example  # Tambahkan password untuk root user
+    restart: always # Restart container jika terhenti
+
+volumes:
+  app-db:  # Volume bernama app-db 
