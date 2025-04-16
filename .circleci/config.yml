@@ -1,0 +1,35 @@
+version: 2.1
+jobs:
+  lint-dockerfile:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Install hadolint
+          command: |
+            wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64
+            chmod +x /bin/hadolint
+      - run:
+          name: Run hadolint
+          command: hadolint Dockerfile
+  build-app-karsajobs-ui:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build and push image
+          command: |
+            docker build -t ghcr.io/firmansyw30/project-microservices-dicoding/karsajobs-ui:latest .
+            echo $GHCR_TOKEN | docker login ghcr.io -u firmansyw30 --password-stdin
+            docker push ghcr.io/firmansyw30/project-microservices-dicoding/karsajobs-ui:latest
+workflows:
+  version: 2
+  karsajobs-ui-workflow:
+    jobs:
+      - lint-dockerfile
+      - build-app-karsajobs-ui:
+          requires:
+            - lint-dockerfile
