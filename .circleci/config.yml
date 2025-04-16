@@ -1,0 +1,48 @@
+version: 2.1
+jobs:
+  lint-dockerfile:
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - checkout
+      - run:
+          name: Install Hadolint
+          command: |
+            curl -L https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && chmod +x /usr/local/bin/hadolint
+      - run:
+          name: Lint Dockerfile
+          command: hadolint Dockerfile
+
+  test-app:
+    docker:
+      - image: circleci/golang:1.19
+    steps:
+      - checkout
+      - run:
+          name: Run Unit Tests
+          command: go test -v -short --count=1 $(go list ./...)
+
+  build-app-karsajobs:
+    docker:
+      - image: docker:20.10
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build and Push Backend Image
+          command: |
+            docker build -t ghcr.io/firmansyw30/karsajobs:latest .
+            echo $GHCR_TOKEN | docker login ghcr.io -u firmansyw30 --password-stdin
+            docker push ghcr.io/firmansyw30/project-microservices-dicoding/karsajobs:latest
+
+workflows:
+  version: 2
+  karsajobs_pipeline:
+    jobs:
+      - lint-dockerfile
+      - test-app:
+          requires:
+            - lint-dockerfile
+      - build-app-karsajobs:
+          requires:
+            - test-app
